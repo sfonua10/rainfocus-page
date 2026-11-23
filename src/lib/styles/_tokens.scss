@@ -1,0 +1,24 @@
+:root {
+    --color-grape: #5c00dc;
+    --color-grape-8: rgba(92, 0, 220, 0.08);
+
+    // Text
+    --color-text-header: #222222;
+    --color-text-body: #393551;
+
+    // Neutrals
+    --color-g3: #444444; // avattar background, step label text
+    --color-g4: #767676; //inactive nav
+    --color-g5: #777777; //search placeholder
+    --color-black: #000000;
+    --color-white: #ffffff; 
+
+    // UI
+    --color-border: #cbc6de; //border and dividers
+    --color-input-bg: #f5f5f5; //search field
+
+    //Type
+    // Names after the first are fallbacks if Inter fails to load.
+    --font-family: 'Inter Variable', system-ui, sans-serif;
+}
+

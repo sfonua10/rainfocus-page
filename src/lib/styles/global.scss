@@ -1,0 +1,48 @@
+// GLobal styles: loaded once in layout, applies to every page
+
+// pull in _tokens.scss. @use must come before any rules. sass finds the file by itself. This will
+//allow all our tokens to be assessible in the browser.
+@use 'tokens';
+// width/height include padding + border, matching how Figma measure
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+// remove browser's default 8px margin so sidebar touches the edge
+body { 
+    margin: 0;
+    color: var(--color-text-body);
+    background: var(--color-white);
+    font-family: var(--font-family);
+}
+
+button,
+input {
+    font: inherit;
+}
+
+img { 
+    display: block;
+}
+
+//remove default margins; spacing comes from the paddings and gaps chosen
+h1,
+h2,
+h3,
+h4,
+p {
+    margin: 0;
+}
+
+// lists: no bullets or indent.
+ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+a {
+    color: inherit;
+    text-decoration: none;
+}
