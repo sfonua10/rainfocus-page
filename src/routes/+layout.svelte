@@ -1,19 +1,30 @@
 <script>
 	import "@fontsource-variable/inter";
 	import "#lib/styles/global.scss";
+	import { afterNavigate } from "$app/navigation";
 	import rfLogo from "#lib/assets/rf.svg";
 	import eventLogo from "#lib/assets/logo.svg";
 	import avatar from "#lib/assets/fl.svg";
 	import searchIcon from "#lib/assets/search.svg";
 
 	let { children } = $props();
+	let menuOpen = $state(false);
+
+	afterNavigate(() => {
+		menuOpen = false;
+	});
 </script>
+
+<svelte:window
+	onkeydown={(event) => {
+		if (event.key === "Escape") menuOpen = false;
+	}}
+/>
 
 <svelte:head>
 	<link rel="icon" href={rfLogo} />
 </svelte:head>
 
-<!-- App shell: same on every page -->
 <div class="app">
 	<aside class="sidebar">
 		<div class="rail">
@@ -29,13 +40,34 @@
 						height="32"
 					/>
 				</div>
+				<button
+					class="menu-button"
+					type="button"
+					aria-label="Menu"
+					aria-expanded={menuOpen}
+					aria-controls="site-nav"
+					onclick={() => (menuOpen = !menuOpen)}
+				>
+					<svg
+						width="24"
+						height="24"
+						viewBox="0 0 24 24"
+						aria-hidden="true"
+					>
+						<path
+							d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"
+							fill="currentColor"
+						/>
+					</svg>
+				</button>
 			</div>
 
 			<div class="user-tile">
 				<img src={avatar} alt="User avatar" width="32" height="32" />
 			</div>
 		</div>
-		<nav class="nav">
+
+		<nav class="nav" class:open={menuOpen} id="site-nav">
 			<p class="event-name">RainFocus Summit</p>
 			<p class="event-details">Lehi, UT • December 15th</p>
 
@@ -52,7 +84,6 @@
 					</a>
 				</li>
 				<li>
-					<!-- "active" is hard-coded to match the design. -->
 					<a class="nav-item active" href="/attendees">
 						<span class="nav-icon"></span>
 						Attendees
@@ -80,6 +111,16 @@
 			</ul>
 		</nav>
 	</aside>
+
+	{#if menuOpen}
+		<button
+			class="backdrop"
+			type="button"
+			aria-label="Close menu"
+			onclick={() => (menuOpen = false)}
+		></button>
+	{/if}
+
 	<main class="main">
 		{@render children()}
 	</main>
@@ -89,23 +130,12 @@
 	.app {
 		display: flex;
 		height: 100vh;
+		height: 100dvh;
 	}
 
 	.sidebar {
 		display: flex;
-		flex-shrink: 0; // keep its width when the window gets narrow
-	}
-
-	.nav {
-		width: 215px;
-		padding: 12px 8px;
-		border-right: 1px solid var(--color-border);
-	}
-
-	.main {
-		flex: 1; // take up all remaining space
-		overflow-y: auto; // scroll inside the main when content is taller than the window
-		padding: 40px 48px;
+		flex-shrink: 0;
 	}
 
 	.rail {
@@ -135,8 +165,19 @@
 		padding: 4px 8px;
 	}
 
+	.menu-button,
+	.backdrop {
+		display: none;
+	}
+
+	.nav {
+		width: 215px;
+		padding: 12px 8px;
+		border-right: 1px solid var(--color-border);
+	}
+
 	.event-name {
-		padding: 8px 8px 12px; // top, sides, bottom
+		padding: 8px 8px 12px;
 		font-size: 14px;
 		font-weight: 600;
 		line-height: 18.2px;
@@ -179,42 +220,97 @@
 			opacity: 1;
 		}
 	}
+
 	.nav-item {
 		display: flex;
-		align-items: center; // circle and label centred on one line
+		align-items: center;
 		gap: 12px;
-		padding: 8px 12px; // 8 + 24px circle + 8 = Figma's 40px height
+		padding: 8px 12px;
 		border-radius: 8px;
 		font-size: 14px;
 		font-weight: 600;
 		line-height: 18.2px;
 		color: var(--color-g4);
 
-		// Compiles to ".nav-item.active".
 		&.active {
 			background: var(--color-grape-8);
 			color: var(--color-grape);
 		}
 	}
+
 	.nav-icon {
-		flex-shrink: 0; // never squash the circle
+		flex-shrink: 0;
 		width: 24px;
 		height: 24px;
-		border-radius: 50%; // a square with 50% radius is a circle
-		background: currentColor; // follows the label's colour
+		border-radius: 50%;
+		background: currentColor;
 	}
 
 	.sub-list {
-		// 48 left = 12 padding + 24 circle + 12 gap, so links line up with the labels.
 		padding: 4px 12px 12px 48px;
 
 		a {
-			display: block; // the whole row is clickable, not just the words
-			padding: 8px 0; // 8 + 14 line + 8 = Figma's 30px height
+			display: block;
+			padding: 8px 0;
 			font-size: 14px;
 			font-weight: 600;
 			line-height: 14px;
 			color: var(--color-g4);
+		}
+	}
+
+	.main {
+		flex: 1;
+		overflow-y: auto;
+		padding: 40px 48px;
+	}
+
+	@media (max-width: 1023px) {
+		.menu-button {
+			display: grid;
+			place-items: center;
+			width: 48px;
+			height: 40px;
+			border: 0;
+			border-radius: 8px;
+			background: none;
+			color: var(--color-g4);
+			cursor: pointer;
+
+			&[aria-expanded="true"] {
+				background: var(--color-grape-8);
+				color: var(--color-grape);
+			}
+		}
+
+		.nav {
+			display: none;
+			position: fixed;
+			top: 0;
+			bottom: 0;
+			left: 63px;
+			z-index: 2;
+			overflow-y: auto;
+			background: var(--color-white);
+
+			&.open {
+				display: block;
+			}
+		}
+
+		.backdrop {
+			display: block;
+			position: fixed;
+			inset: 0 0 0 63px;
+			z-index: 1;
+			border: 0;
+			background: rgba(0, 0, 0, 0.3);
+		}
+	}
+
+	@media (max-width: 599px) {
+		.main {
+			padding: 24px 16px;
 		}
 	}
 </style>

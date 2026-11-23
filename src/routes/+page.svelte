@@ -126,6 +126,7 @@
 
   .event-header {
     display: flex;
+    flex-wrap: wrap;
     align-items: flex-start;
     gap: 16px;
   }
@@ -228,7 +229,8 @@
 
   .settings {
     display: flex;
-    gap: 32px;
+    flex-wrap: wrap;
+    gap: 16px 32px;
     min-height: 120px;
     padding: 15px 23px;
     border: 1px solid var(--color-border);
@@ -274,5 +276,24 @@
     font-size: 12px;
     color: var(--color-text-header);
     cursor: pointer;
+  }
+
+  @media (max-width: 1279px) {
+    .cards {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (max-width: 699px) {
+    .cards {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 599px) {
+    .settings,
+    .card {
+      padding: 15px;
+    }
   }
 </style>
